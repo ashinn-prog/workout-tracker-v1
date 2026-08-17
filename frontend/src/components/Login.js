@@ -1,59 +1,71 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API_BASE_URL from "../api";
 
-function Login({ onLoginSuccess }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const Login = ({ onLoginSuccess }) => {
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api-token-auth/", {
-        username,
-        password,
+      const response = await fetch(`${API_BASE_URL}/api/login/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      const token = response.data.token;
-      localStorage.setItem("userToken", token);
-      onLoginSuccess(token);
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        localStorage.setItem("userToken", data.token);
+        onLoginSuccess(data.token);
+      } else {
+        setError(data.error || "Invalid username or password.");
+      }
     } catch (err) {
-      setError("Invalid username or password");
+      setError("Error connecting to backend server.");
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <div className="status-msg error">{error}</div>}
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: "12px" }}>
+    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
+      <h2>Log In</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Username:</label>
           <input
             type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ width: "100%" }}
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             required
           />
         </div>
-        <div style={{ marginBottom: "16px" }}>
+        <div>
+          <label>Password:</label>
           <input
             type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%" }}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
           />
         </div>
-        <button type="submit" style={{ width: "100%" }}>
+        <button type="submit" style={{ marginTop: "10px" }}>
           Log In
         </button>
       </form>
     </div>
   );
-}
+};
 
 export default Login;

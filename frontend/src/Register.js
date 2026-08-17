@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE_URL from "./api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+      const response = await fetch(`${API_BASE_URL}/api/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,57 +1,52 @@
-import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import API_BASE_URL from "../api";
 
-function WorkoutList({ refreshTrigger }) {
+const WorkoutList = ({ refreshTrigger }) => {
   const [workouts, setWorkouts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchWorkouts = useCallback(async () => {
-    const token = localStorage.getItem("userToken");
-    if (!token) return;
-
-    try {
-      setLoading(true);
-      const response = await axios.get("http://127.0.0.1:8000/api/workouts/", {
-        headers: { Authorization: `Token ${token}` },
-      });
-      setWorkouts(response.data);
-      setError("");
-    } catch (err) {
-      setError("Failed to fetch workouts.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchWorkouts();
-  }, [fetchWorkouts, refreshTrigger]);
+    const fetchWorkouts = async () => {
+      const token = localStorage.getItem("userToken");
 
-  if (loading) return <p style={{ color: "#64748b" }}>Loading workouts...</p>;
-  if (error) return <div className="status-msg error">{error}</div>;
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/workouts/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setWorkouts(data);
+        } else {
+          setError("Failed to fetch workouts.");
+        }
+      } catch (err) {
+        setError("Error connecting to server.");
+      }
+    };
+
+    fetchWorkouts();
+  }, [refreshTrigger]);
 
   return (
     <div>
-      <h3>Saved Workouts</h3>
+      <h3>Your Logged Workouts</h3>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {workouts.length === 0 ? (
-        <p style={{ color: "#64748b" }}>No workouts recorded yet.</p>
+        <p>No workouts recorded yet.</p>
       ) : (
-        workouts.map((session) => (
-          <div key={session.id} className="workout-card">
-            <strong>Date: {session.date}</strong>
-            <ul>
-              {session.exercises.map((ex) => (
-                <li key={ex.id}>
-                  <strong>{ex.name}</strong> — {ex.sets} sets × {ex.reps} reps @ {ex.weight} kg/lbs
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
+        <ul>
+          {workouts.map((item) => (
+            <li key={item.id || item.name}>
+              <strong>{item.name}</strong>: {item.sets} sets × {item.reps} reps ({item.weight || 0} lbs/kg)
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
-}
+};
 
 export default WorkoutList;

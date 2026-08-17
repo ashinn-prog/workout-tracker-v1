@@ -1,135 +1,80 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API_BASE_URL from "../api";
 
-function WorkoutLogger({ onWorkoutAdded }) {
-  const [exercises, setExercises] = useState([
-    { name: "", sets: "", reps: "", weight: "" },
-  ]);
+const WorkoutLogger = ({ onWorkoutAdded }) => {
+  const [workout, setWorkout] = useState({ name: "", sets: "", reps: "", weight: "" });
   const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(true);
-  const [loading, setLoading] = useState(false);
 
-  const handleExerciseChange = (index, e) => {
-    const updated = [...exercises];
-    updated[index][e.target.name] = e.target.value;
-    setExercises(updated);
-  };
-
-  const addExerciseRow = () => {
-    setExercises([...exercises, { name: "", sets: "", reps: "", weight: "" }]);
-  };
-
-  const removeExerciseRow = (index) => {
-    if (exercises.length === 1) return;
-    setExercises(exercises.filter((_, i) => i !== index));
+  const handleChange = (e) => {
+    setWorkout({ ...workout, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
     const token = localStorage.getItem("userToken");
-    if (!token) {
-      setMessage("Please log in first.");
-      setIsSuccess(false);
-      setLoading(false);
-      return;
-    }
-
-    const payload = {
-      exercises: exercises.map((ex) => ({
-        name: ex.name,
-        sets: parseInt(ex.sets, 10),
-        reps: parseInt(ex.reps, 10),
-        weight: parseFloat(ex.weight),
-      })),
-    };
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/workouts/", payload, {
-        headers: { Authorization: `Token ${token}` },
+      const response = await fetch(`${API_BASE_URL}/api/workouts/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify(workout),
       });
-      setMessage("Workout saved successfully!");
-      setIsSuccess(true);
-      setExercises([{ name: "", sets: "", reps: "", weight: "" }]);
-      if (onWorkoutAdded) onWorkoutAdded();
+
+      if (response.ok) {
+        setMessage("Workout logged successfully!");
+        setWorkout({ name: "", sets: "", reps: "", weight: "" });
+        if (onWorkoutAdded) onWorkoutAdded();
+      } else {
+        setMessage("Failed to log workout.");
+      }
     } catch (err) {
-      setMessage("Failed to save workout.");
-      setIsSuccess(false);
-    } finally {
-      setLoading(false);
+      setMessage("Error connecting to server.");
     }
   };
 
   return (
     <div>
-      <h2>Log Workout Session</h2>
-      {message && (
-        <div className={`status-msg ${isSuccess ? "success" : "error"}`}>
-          {message}
-        </div>
-      )}
-
+      <h3>Log Workout</h3>
+      {message && <p>{message}</p>}
       <form onSubmit={handleSubmit}>
-        {exercises.map((ex, index) => (
-          <div key={index} className="exercise-row">
-            <input
-              type="text"
-              name="name"
-              placeholder="Exercise"
-              value={ex.name}
-              onChange={(e) => handleExerciseChange(index, e)}
-              required
-            />
-            <input
-              type="number"
-              name="sets"
-              placeholder="Sets"
-              value={ex.sets}
-              onChange={(e) => handleExerciseChange(index, e)}
-              required
-            />
-            <input
-              type="number"
-              name="reps"
-              placeholder="Reps"
-              value={ex.reps}
-              onChange={(e) => handleExerciseChange(index, e)}
-              required
-            />
-            <input
-              type="number"
-              step="0.1"
-              name="weight"
-              placeholder="kg/lbs"
-              value={ex.weight}
-              onChange={(e) => handleExerciseChange(index, e)}
-              required
-            />
-            {exercises.length > 1 && (
-              <button
-                type="button"
-                className="remove-btn"
-                onClick={() => removeExerciseRow(index)}
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        ))}
-
-        <div style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
-          <button type="button" onClick={addExerciseRow}>
-            + Add Exercise
-          </button>
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save Session"}
-          </button>
-        </div>
+        <input
+          type="text"
+          name="name"
+          placeholder="Exercise Name"
+          value={workout.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="sets"
+          placeholder="Sets"
+          value={workout.sets}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="reps"
+          placeholder="Reps"
+          value={workout.reps}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="weight"
+          placeholder="Weight (kg/lbs)"
+          value={workout.weight}
+          onChange={handleChange}
+        />
+        <button type="submit">Add Workout</button>
       </form>
     </div>
   );
-}
+};
 
 export default WorkoutLogger;
