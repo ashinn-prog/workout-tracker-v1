@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API_BASE_URL from "./api";
+import API_BASE_URL from "../api";
 
 const Register = ({ onRegisterSuccess }) => {
   const [formData, setFormData] = useState({ username: "", password: "" });
