@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Login from "./components/Login";
-import Register from "./Register";
+import Register from "./components/Register";
 import WorkoutLogger from "./components/WorkoutLogger";
 import WorkoutList from "./components/WorkoutList";
 import WorkoutGuide from "./components/WorkoutGuide";
