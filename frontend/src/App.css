@@ -1,0 +1,297 @@
+/* Global Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  padding: 30px;
+}
+
+/* Animated Gym Background */
+body::before {
+  content: "";
+  position: fixed;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(88, 28, 135, 0.75)),
+              url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.65) contrast(1.1);
+  animation: bgPan 25s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+@keyframes bgPan {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.08) translate(-10px, -15px); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+/* Main Dashboard Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 420px 360px;
+  gap: 24px;
+  width: 100%;
+  max-width: 820px;
+  align-items: start;
+}
+
+/* Glass Panel Base Styling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4),
+              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  padding: 24px;
+}
+
+/* Typography */
+h2, h3 {
+  color: #ffffff;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.1rem; }
+
+hr {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+/* Glass Inputs */
+input {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  outline: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+input::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+/* Glass Buttons */
+button {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.85), rgba(59, 130, 246, 0.85));
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 1), rgba(59, 130, 246, 1));
+  transform: translateY(-1px);
+}
+
+button[type="button"] {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+button[type="button"]:hover { background: rgba(255, 255, 255, 0.25); }
+
+.logout-btn {
+  background: rgba(239, 68, 68, 0.7);
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.logout-btn:hover { background: rgba(239, 68, 68, 0.9); }
+
+/* Dynamic Exercise Row Layout */
+.exercise-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.exercise-row input[name="name"] { flex: 2; width: 100%; }
+.exercise-row input[name="sets"] { flex: 1; width: 42px; text-align: center; }
+.exercise-row input[name="reps"] { flex: 1; width: 42px; text-align: center; }
+.exercise-row input[name="weight"] { flex: 1; width: 48px; text-align: center; }
+
+.remove-btn {
+  background: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+}
+
+/* Glass Workout Cards */
+.workout-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.workout-card ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.workout-card li {
+  padding: 3px 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Status Banners */
+.status-msg {
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  backdrop-filter: blur(10px);
+}
+
+.status-msg.success {
+  background: rgba(34, 197, 94, 0.25);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #86efac;
+}
+
+.status-msg.error {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+/* Side Details & Muscle Guide Panel */
+.side-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.side-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateX(4px);
+  border-color: #38bdf8;
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 6px;
+}
+
+/* Fixed Modal Overlay Positioning */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* Modal Box Sizing & Inner Scrolling */
+.modal-content {
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: auto;
+}
+
+/* Modal Scrollbar Styling */
+.modal-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+/* Responsive Adjustment for Small Screens */
+@media (max-width: 800px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
